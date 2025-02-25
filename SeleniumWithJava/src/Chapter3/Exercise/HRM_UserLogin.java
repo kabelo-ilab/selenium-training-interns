@@ -17,11 +17,6 @@ public class HRM_UserLogin {
 
         driver.get("https://opensource-demo.orangehrmlive.com/web/index.php/auth/login");
 
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
         WebElement txtUsername = driver.findElement(By.cssSelector("input[name='username']"));
         txtUsername.sendKeys("Admin");
 
