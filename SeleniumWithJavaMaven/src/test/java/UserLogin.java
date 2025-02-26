@@ -28,35 +28,47 @@ public class UserLogin {
 
     }
 
-    @BeforeEach
+    @BeforeAll
     void openTab(){
         driver = new ChromeDriver();
         driver.manage().window().maximize();
-        driver.navigate().to("https://opensource-demo.orangehrmlive.com/web/index.php/auth/login");
     }
 
     @ParameterizedTest()
     //@CsvSource(value = {"Admin,admin123","Admin,admin","Admin123,admin123"})
     @MethodSource("personList")
-    void testValidUsernameAndValidPassword(String firstaname, String lastname, String username, String password, String phone, String email, int age){
+    void testValidUsernameAndValidPassword(Person p){
+
+        driver.switchTo().newWindow(WindowType.TAB);
+        driver.manage().deleteAllCookies();
+        driver.get("https://opensource-demo.orangehrmlive.com/web/index.php");
 
         String expected = "https://opensource-demo.orangehrmlive.com/web/index.php/dashboard/index";
 
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-        driver.findElement(By.cssSelector("input[name='username']")).sendKeys(username);
-        driver.findElement(By.cssSelector("input[name='password']")).sendKeys(password);
+        driver.findElement(By.cssSelector("input[name='username']")).sendKeys(p.getUsername());
+        driver.findElement(By.cssSelector("input[name='password']")).sendKeys(p.getPassword());
         driver.findElement(By.cssSelector("button[type='submit']")).click();
 
         //WebElement lblError = driver.findElement(By.cssSelector(".oxd-text.oxd-text--p.oxd-alert-content-text"));
 
         String actual = driver.getCurrentUrl().toString();
 
-        System.out.println("firstaname = " + firstaname + ", lastname = " + lastname + ", username = " + username + ", password = " + password + ", phone = " + phone + ", email = " + email + ", age = " + age);
+        System.out.println("firstaname = " + p.getFirstaname() + ", lastname = " + p.getLastname() + ", username = " + p.getUsername() + ", password = " + p.getPassword() +
+                ", phone = " + p.getPhone() + ", email = " + p.getEmail() + ", age = " + p.getAge());
         assertEquals(expected,actual);
 
     }
 
-    Stream<Arguments> personList(){
+    List<Person> personList(){
+        return List.of(
+                new Person("Mike","Ross","admin","admin","0123456987","mike@gmail.com",30),
+                new Person("Jessica","Perason","Admin","admin123","0123456987","jess@gmail.com",40),
+                new Person("Harvey","Specter","Admin","admin123","0123456987","harvey@gmail.com",41),
+                new Person("Rachael","Zane","admin","admin123","0123456987","rachael@gmail.com",28)
+        );
+    }
+    Stream<Arguments> personDetails(){
         return Stream.of(
                 arguments("Mike","Ross","admin","admin","0123456987","mike@gmail.com",30),
                 arguments("Jessica","Perason","Admin","admin123","0123456987","jess@gmail.com",40),
